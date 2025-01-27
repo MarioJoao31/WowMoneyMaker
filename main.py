@@ -8,6 +8,7 @@ import win32gui
 import win32con
 import pygetwindow as gw
 from pynput import mouse  # For mouse event listening
+from pynput.mouse import Controller, Button
 
 
 mailXY = []
@@ -164,6 +165,20 @@ class App:
         pydirectinput.keyUp('s')    # Release the 'W' key
         self.log_message("Stopped moving.")
 
+    def click_auction(self):
+        """
+        Clicks at the auction house coordinates using the mouse.
+        """
+        if len(auctionXY) == 2:  # Ensure the coordinates are set
+            self.log_message(f"Clicking at auction coordinates: X={auctionXY[0]}, Y={auctionXY[1]}")
+
+            # Use pynput to move the mouse and click
+            mouse_controller = Controller()
+            mouse_controller.position = (auctionXY[0], auctionXY[1])  # Move to the specified coordinates
+            mouse_controller.click(Button.left, 1)  # Perform a left-click
+        else:
+            self.log_message("Auction coordinates are not set! Please set them before starting.")
+
     def Start(self):
         """
         Starts the forward movement.
@@ -174,9 +189,12 @@ class App:
             duration_forward = float(self.duration_move_forward.get())  # Get duration from the input field
             self.move_forward(duration_forward)
 
+            self.click_auction()
+
+
             # andar para atras
-            duration_backwards = float(self.duration_move_backwards.get())  # Get duration from the input field
-            self.move_backwards(duration_backwards)
+            #duration_backwards = float(self.duration_move_backwards.get())  # Get duration from the input field
+            #self.move_backwards(duration_backwards)
 
 
         except ValueError:
