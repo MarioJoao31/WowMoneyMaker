@@ -13,6 +13,7 @@ from pynput import mouse  # For mouse event listening
 mailXY = []
 auctionXY = []
 
+#focus game window
 def focus_game_window(window_title="World of Warcraft"):
     """
     Focuses on the specified game window by title.
@@ -42,6 +43,10 @@ def focus_game_window(window_title="World of Warcraft"):
         print(f"Error focusing on window: {e}")
         return False
 
+
+
+
+    
 # Tkinter application class
 class App:
     def __init__(self, root):
@@ -63,12 +68,20 @@ class App:
 
         # Duration input
         tk.Label(self.root, text="Move Duration (seconds):").grid(row=2, column=0, padx=10, pady=5, sticky="w")
-        self.duration_entry = tk.Entry(self.root)
-        self.duration_entry.grid(row=2, column=1, padx=10, pady=5)
-        self.duration_entry.insert(0, "5")  # Default duration
+        self.duration_move_forward = tk.Entry(self.root)
+        self.duration_move_forward.grid(row=2, column=1, padx=10, pady=5)
+        self.duration_move_forward.insert(0, "7")  # Default duration
+        # Duration input
+        tk.Label(self.root, text="Move Duration (seconds):").grid(row=3, column=0, padx=10, pady=5, sticky="w")
+        self.duration_move_backwards = tk.Entry(self.root)
+        self.duration_move_backwards.grid(row=3, column=1, padx=10, pady=5)
+        self.duration_move_backwards.insert(0, "11")  # Default duration
+
+        #start button 
+        tk.Button(self.root, text="Start ", command=self.Start, bg="green", fg="white").grid(row=4, column=0, padx=10, pady=5)
 
         # Log box
-        tk.Label(self.root, text="Logs:").grid(row=4, column=0, padx=10, pady=5, sticky="w")
+        tk.Label(self.root, text="Logs:").grid(row=5, column=0, padx=10, pady=5, sticky="w")
         self.log_box = scrolledtext.ScrolledText(self.root, width=60, height=10, state="disabled")
         self.log_box.grid(row=5, column=0, padx=5, pady=2)
 
@@ -126,6 +139,50 @@ class App:
         # Start the mouse listener
         self.mouse_listener = mouse.Listener(on_click=on_click)
         self.mouse_listener.start()
+
+        # Function to simulate character movement
+   
+    def move_forward(self, duration):
+        """
+        Simulates holding down the 'W' key for a specific duration.
+        Logs the action using the provided log callback.
+        """
+        self.log_message(f"Moving forward for {duration} seconds...")
+        pydirectinput.keyDown('w')  # Press and hold the 'W' key
+        time.sleep(duration)        # Wait for the duration
+        pydirectinput.keyUp('w')    # Release the 'W' key
+        self.log_message("Stopped moving.")
+
+    def move_backwards(self, duration):
+        """
+        Simulates holding down the 's' key for a specific duration.
+        Logs the action using the provided log callback.
+        """
+        self.log_message(f"Moving Backwards for {duration} seconds...")
+        pydirectinput.keyDown('s')  # Press and hold the 'W' key
+        time.sleep(duration)        # Wait for the duration
+        pydirectinput.keyUp('s')    # Release the 'W' key
+        self.log_message("Stopped moving.")
+
+    def Start(self):
+        """
+        Starts the forward movement.
+        """
+        try:
+            focus_game_window()
+            # andar para a frente
+            duration_forward = float(self.duration_move_forward.get())  # Get duration from the input field
+            self.move_forward(duration_forward)
+
+            # andar para atras
+            duration_backwards = float(self.duration_move_backwards.get())  # Get duration from the input field
+            self.move_backwards(duration_backwards)
+
+
+        except ValueError:
+            self.log_message("Invalid duration! Please enter a number.")
+    
+
 
 # Main execution
 if __name__ == "__main__":
